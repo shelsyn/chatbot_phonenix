@@ -1,7 +1,6 @@
 const http = require('http');
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const schedule = require('node-schedule');
 
 // Crear servidor HTTP
 const server = http.createServer((req, res) => {
@@ -35,52 +34,63 @@ client.on('ready', () => {
 // Map para manejar el estado de los usuarios
 const userStates = new Map();
 
-// Manejar mensajes entrantes
+// Iniciar cliente de WhatsApp solo si se recibe el mensaje específico
 client.on('message', async (message) => {
   const userId = message.from;
   const currentState = userStates.get(userId);
 
-  if (message.body.startsWith("Hola, quiero información de Renting gracias.")) {
+  if (message.body.startsWith("Hola, quiero información de Renting gracias")) {
     await handleInterest(message, userId);
-    return;
-  }
-
-  switch (currentState) {
-    case undefined:
-      userStates.set(userId, 'main_menu');
-      await message.reply(
-        "Hola bienvenido a Phoenix car distribuidores autorizados de mobilize renting, rentamos vehículos a largo plazo (mas de un año), al utilizar este medio aceptas términos y condiciones de WhatsApp; para continuar con nuestra asesoría debes aceptar la política de tratamiento de datos personales que puede ser consultada https://acortar.link/PfUDnS, si la aceptas digita SI, o en caso contrario digita NO. \n" +
-        "*Si*\n" +
-        "*No*\n"
-      );
-      break;
-    case 'main_menu':
-      await handleMainMenuSelection(message, userId);
-      break;
-    case 'name_input':
-      await handleNameInput(message, userId);
-      break;
-    case 'persona_type':
-      await handlePersonaTypeSelection(message, userId);
-      break;
-    case 'data_credit':
-      await handleDataCreditSelection(message, userId);
-      break;
-    case 'income_verification':
-      await handleIncomeVerificationSelection(message, userId);
-      break;
-    case 'contact_time':
-      await handleContactTimeSelection(message, userId);
-      break;
-    default:
-      let state = currentState;
-      userStates.delete(userId);
-      await message.reply(`Estabas en el estado: '${state}'. No comprendo tu selección. Vamos a empezar de nuevo.`);
-      break;
+  } else if (currentState) {
+    // Procesar según el estado actual
+    switch (currentState) {
+      case 'main_menu':
+        await handleMainMenuSelection(message, userId);
+        break;
+      case 'name_input':
+        await handleNameInput(message, userId);
+        break;
+      case 'persona_type':
+        await handlePersonaTypeSelection(message, userId);
+        break;
+      case 'data_credit':
+        await handleDataCreditSelection(message, userId);
+        break;
+      case 'income_verification':
+        await handleIncomeVerificationSelection(message, userId);
+        break;
+      case 'contact_time':
+        await handleContactTimeSelection(message, userId);
+        break;
+      case 'schedule_time':
+        await handleScheduleTime(message, userId);
+        break;
+      case 'juridica':
+        await handleJuridicaTime(message, userId);
+        break;
+      case 'contact_time_juridica':
+        await handleContactTimeJuridica(message, userId);
+        break;
+      default:
+        // Estado no reconocido, reiniciar
+        userStates.delete(userId);
+        await message.reply("No comprendo tu mensaje. Vamos a empezar de nuevo.\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias.*");
+        break;
+    }
   }
 });
 
-// Funciones de manejo de estados
+// Función de manejo inicial del interés en renting
+async function handleInterest(message, userId) {
+  userStates.set(userId, 'main_menu');
+  await message.reply(
+    "Hola, bienvenido a Phoenix Car, distribuidores autorizados de Mobilize Renting. Rentamos vehículos a largo plazo (más de un año). Al usar este medio, aceptas los términos y condiciones de WhatsApp. Para continuar con nuestra asesoría, debes aceptar nuestra política de tratamiento de datos personales que puedes consultar en https://acortar.link/PfUDnS. Si la aceptas, escribe *Si*, o en caso contrario, *No*.\n" +
+    "*Si*\n" +
+    "*No*\n"
+  );
+}
+
+// Manejo de selección del menú principal
 async function handleMainMenuSelection(message, userId) {
   const userSelection = message.body.trim();
   switch (userSelection) {
@@ -89,7 +99,7 @@ async function handleMainMenuSelection(message, userId) {
       await message.reply("Hola! Entiendo que estás interesado en conocer nuestra figura y servicios. ¿Dime cuál es tu nombre?");
       break;
     case 'No':
-      await message.reply("Hola! Entiendo que *NO* estás de acuerdo con nuestras políticas de tratamiento de datos. Si cambias de opinión, acá estaremos para servirte!");
+      await message.reply("Hola! Entiendo que *NO* estás de acuerdo con nuestras políticas de tratamiento de datos. Si cambias de opinión, acá estaremos para servirte!\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias.*");
       userStates.delete(userId);
       break;
     default:
@@ -98,6 +108,7 @@ async function handleMainMenuSelection(message, userId) {
   }
 }
 
+// Función auxiliar para manejar el nombre de usuario
 async function handleNameInput(message, userId) {
   const userName = message.body.trim();
   userStates.set(userId, 'persona_type'); // Cambiar el estado a persona_type
@@ -109,20 +120,27 @@ async function handleNameInput(message, userId) {
   );
 }
 
+// Selección de tipo de persona (Natural o Jurídica)
 async function handlePersonaTypeSelection(message, userId) {
   const userSelection = message.body.trim();
   switch (userSelection) {
     case '1':
       userStates.set(userId, 'data_credit');
       await message.reply(
-        "Para continuar con nuestro proceso por favor responda las siguientes preguntas: ¿Está usted reportado en Data crédito?\n" +
+        "Para continuar con nuestro proceso, por favor responda las siguientes preguntas:\n" +
+        "¿Está usted reportado en Data crédito?\n" +
         "1 - *NO*\n" +
         "2 - *SI*\n"
       );
       break;
     case '2':
-      await message.reply("Has seleccionado 'Jurídica'. Aquí tienes más información para personas jurídicas...");
-      userStates.delete(userId); // Reiniciar el estado después de manejar la selección
+      userStates.set(userId, 'juridica'); // Cambiar el estado a juridica para personas juridicas
+      await message.reply(
+        "¿Cuánto tiempo tiene de constituida su empresa?\n" +
+        "1 - De 1 a 12 meses\n" +
+        "2 - De 12 a 24 meses\n" +
+        "3 - Más de 24 meses\n"
+      );
       break;
     default:
       await message.reply("Por favor, selecciona una opción válida:\n1 - Natural\n2 - Jurídica");
@@ -130,6 +148,7 @@ async function handlePersonaTypeSelection(message, userId) {
   }
 }
 
+// Manejo de selección sobre reporte en Data Crédito
 async function handleDataCreditSelection(message, userId) {
   const userSelection = message.body.trim();
   switch (userSelection) {
@@ -142,7 +161,7 @@ async function handleDataCreditSelection(message, userId) {
       );
       break;
     case '2':
-      await message.reply("Lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido al reporte financiero no positivo. Tan pronto usted regule esta situación, podremos retomar el proceso de arrendamiento de vehículo.");
+      await message.reply("Lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido al reporte financiero no positivo. Tan pronto usted regule esta situación, podremos retomar el proceso de arrendamiento de vehículo.\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias*");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     default:
@@ -151,19 +170,20 @@ async function handleDataCreditSelection(message, userId) {
   }
 }
 
+// Verificación de ingresos mensuales
 async function handleIncomeVerificationSelection(message, userId) {
   const userSelection = message.body.trim();
   switch (userSelection) {
     case '1':
       userStates.set(userId, 'contact_time');
       await message.reply(
-        "A continuación un especialista en arrendamiento operacional de vehículos se comunicará con usted para poder procesar su solicitud:\n" +
+        "¿Qué desea hacer?\n" +
         "1 - Que se comunique de inmediato.\n" +
-        "2 - Que se comuniquen en otro horario.\n"
+        "2 - Que se comuniquen en otro horario."
       );
       break;
     case '2':
-      await message.reply("Lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido al nivel de ingresos mínimo permitido. Tan pronto usted regule esta situación, podremos retomar el proceso de arrendamiento de vehículo.");
+      await message.reply("Lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido al nivel de ingresos mínimo permitido. Tan pronto usted regule esta situación, podremos retomar el proceso de arrendamiento de vehículo.\n\n");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     default:
@@ -172,16 +192,17 @@ async function handleIncomeVerificationSelection(message, userId) {
   }
 }
 
+// Selección de horario de contacto
 async function handleContactTimeSelection(message, userId) {
   const userSelection = message.body.trim();
   switch (userSelection) {
     case '1':
-      await message.reply("El especialista se contactará lo más pronto posible con usted.");
+      await message.reply("El especialista se contactará lo más pronto posible con usted.\n\n");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '2':
-      await message.reply("¿En qué horario desea que el especialista en arrendamiento se comunique con usted?");
-      userStates.delete(userId); // Reiniciar el estado después de manejar la selección
+      await message.reply("¿En qué horario desea que el especialista en arrendamiento se comunique con usted?\n *Ejemplo: Desde la 1pm hasta las 5pm*");
+      userStates.set(userId, 'schedule_time'); // Cambiar el estado para manejar el horario de contacto
       break;
     default:
       await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato.\n2 - Que se comuniquen en otro horario.");
@@ -189,11 +210,52 @@ async function handleContactTimeSelection(message, userId) {
   }
 }
 
-async function handleInterest(message, userId) {
-  const mensaje = message.body;
-  const indiceDosPuntos = mensaje.indexOf(":");
-  const textoExtraido = mensaje.slice(indiceDosPuntos + 2).trim();
-  const elementos = textoExtraido.split(", ");
+// Selección de horario específico de contacto
+async function handleScheduleTime(message, userId) {
+  const scheduleTime = message.body.trim();
+  await message.reply(`Gracias! El especialista se comunicará con usted en el horario solicitado. Buen día!\n\n`);
+  userStates.delete(userId); // Reiniciar el estado después de manejar la selección
 }
 
+// Manejo de selección sobre tiempo constituido de la empresa para personas jurídicas
+async function handleJuridicaTime(message, userId) {
+  const userSelection = message.body.trim();
+  switch (userSelection) {
+    case '1':
+    case '2':
+    case '3':
+      userStates.set(userId, 'contact_time_juridica');
+      await message.reply(
+        "¿Qué desea hacer?\n" +
+        "1 - Que se comunique de inmediato.\n" +
+        "2 - Que se comuniquen en otro horario.\n\n" +
+        "Si deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias.*"
+      );
+      break;
+    default:
+      await message.reply("Por favor, selecciona una opción válida:\n1 - De 1 a 12 meses\n2 - De 12 a 24 meses\n3 - Más de 24 meses");
+      break;
+  }
+}
+
+// Selección de horario de contacto para personas jurídicas
+async function handleContactTimeJuridica(message, userId) {
+  const userSelection = message.body.trim();
+  switch (userSelection) {
+    case '1':
+      await message.reply("El especialista se contactará lo más pronto posible con usted.\n\n");
+      userStates.delete(userId); // Reiniciar el estado después de manejar la selección
+      break;
+    case '2':
+      await message.reply("¿En qué horario desea que el especialista en arrendamiento se comunique con usted?\n *Ejemplo: Desde la 1pm hasta las 5pm*");
+      userStates.set(userId, 'schedule_time'); // Cambiar el estado para manejar el horario de contacto
+      break;
+    default:
+      await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato.\n2 - Que se comuniquen en otro horario.");
+      break;
+  }
+}
+
+// Iniciar cliente de WhatsApp solo después de definir los eventos
 client.initialize();
+
