@@ -92,7 +92,7 @@ async function handleInterest(message, userId) {
   await message.reply(
     "Hola, bienvenido a Phoenix Car, distribuidores autorizados de Mobilize Renting. Rentamos vehículos a largo plazo (más de un año). Al utilizar este medio, aceptas los términos y condiciones de WhatsApp.\n\n" +
     "Para continuar con nuestra asesoría, debes aceptar nuestra política de tratamiento de datos personales.\n" +
-    "* *tratamiento de datos*:https://acortar.link/PfUDnS.\n\n" +
+    "* *tratamiento de datos* (https://acortar.link/PfUDnS).\n\n" +
     "Si aceptas, escribe *Si*. Si no, escribe *No*.\n" +
     "*🚗 Si*\n" +
     "*🚗 No*\n"
@@ -126,7 +126,7 @@ async function handleNameInput(message, userId) {
     `Sr ${userName}, ¿qué tipo de persona es usted?\n` +
     "1 - Natural\n" +
     "2 - Jurídica\n" +
-    "3 - Regresar a la opción anterior\n"
+    "3 - Volver al menú anterior\n"
   );
 }
 
@@ -142,7 +142,7 @@ async function handlePersonaTypeSelection(message, userId) {
         "¿Está usted reportado en Data crédito?\n" +
         "1 - *SI*\n" +
         "2 - *NO*\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     case '2':
@@ -152,14 +152,14 @@ async function handlePersonaTypeSelection(message, userId) {
         "1 - De 1 a 12 meses\n" +
         "2 - De 12 a 24 meses\n" +
         "3 - Más de 24 meses\n" +
-        "4 - Regresar a la opción anterior\n"
+        "4 - Volver al menú anterior\n"
       );
       break;
     case '3':
       await handleInterest(message, userId);
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - Natural\n2 - Jurídica\n3 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - Natural\n2 - Jurídica\n3 - Volver al menú anterior");
       break;
   }
 }
@@ -179,7 +179,7 @@ async function handleDataCreditSelection(message, userId) {
         `Sr ${userName}, sus ingresos mensuales son superiores a $4'000.000?\n` +
         "1 - *SI*\n" +
         "2 - *NO*\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     case '3':
@@ -188,11 +188,11 @@ async function handleDataCreditSelection(message, userId) {
         `Sr ${userName}, ¿qué tipo de persona es usted?\n` +
         "1 - Natural\n" +
         "2 - Jurídica\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - SI\n2 - NO\n3 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - SI\n2 - NO\n3 - Volver al menú anterior");
       break;
   }
 }
@@ -208,7 +208,7 @@ async function handleIncomeVerificationSelection(message, userId) {
         `A continuación un especialista en arrendamiento operacional de vehículos se comunicará con usted para poder procesar su solicitud:\n` +
         "1 - Que se comunique de inmediato\n" +
         "2 - Que se comuniquen conmigo en otro horario\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     case '2':
@@ -222,11 +222,11 @@ async function handleIncomeVerificationSelection(message, userId) {
         "¿Está usted reportado en Data crédito?\n" +
         "1 - *SI*\n" +
         "2 - *NO*\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - SI\n2 - NO\n3 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - SI\n2 - NO\n3 - Volver al menú anterior");
       break;
   }
 }
@@ -237,14 +237,14 @@ async function handleContactTimeNatural(message, userId) {
   const { userName } = userStates.get(userId);
   switch (userSelection) {
     case '1':
-      await message.reply("El especialista llamará al cliente de inmediato.");
+      await message.reply("El especialista se pondrá en contacto contigo de inmediato.");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '2':
       userStates.set(userId, { state: 'schedule_time_natural', previousState: 'contact_time_natural', userName });
       await message.reply(
         `¿En qué horario desea que el especialista en arrendamiento se comunique con usted?\n` +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     case '3':
@@ -253,11 +253,11 @@ async function handleContactTimeNatural(message, userId) {
         `Sr ${userName}, sus ingresos mensuales son superiores a $4'000.000?\n` +
         "1 - *SI*\n" +
         "2 - *NO*\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato\n2 - Que se comuniquen conmigo en otro horario\n3 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato\n2 - Que se comuniquen conmigo en otro horario\n3 - Volver al menú anterior");
       break;
   }
 }
@@ -266,7 +266,7 @@ async function handleContactTimeNatural(message, userId) {
 async function handleScheduleTimeNatural(message, userId) {
   const { userName } = userStates.get(userId);
   const contactTime = message.body.trim();
-  await message.reply(`El especialista llamará al cliente de inmediato a la hora indicada (${contactTime}).`);
+  await message.reply(`El especialista se contactará contigo de inmediato a la hora indicada (${contactTime}).`);
   userStates.delete(userId); // Reiniciar el estado después de manejar la selección
 }
 
@@ -284,7 +284,7 @@ async function handleTimeConstitutedJuridica(message, userId) {
         "1 - Automóvil o SUV\n" +
         "2 - Pick up\n" +
         "3 - Van de carga o camiones\n" +
-        "4 - Regresar a la opción anterior\n"
+        "4 - Volver al menú anterior\n"
       );
       break;
     case '4':
@@ -293,11 +293,11 @@ async function handleTimeConstitutedJuridica(message, userId) {
         `Sr ${userName}, ¿qué tipo de persona es usted?\n` +
         "1 - Natural\n" +
         "2 - Jurídica\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - De 1 a 12 meses\n2 - De 12 a 24 meses\n3 - Más de 24 meses\n4 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - De 1 a 12 meses\n2 - De 12 a 24 meses\n3 - Más de 24 meses\n4 - Volver al menú anterior");
       break;
   }
 }
@@ -315,7 +315,7 @@ async function handleVehicleInterestJuridica(message, userId) {
         `A continuación un especialista en arrendamiento operacional de vehículos se comunicará con usted para poder procesar su solicitud:\n` +
         "1 - Que se comunique de inmediato\n" +
         "2 - Que se comuniquen conmigo en otro horario\n" +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     case '4':
@@ -325,11 +325,11 @@ async function handleVehicleInterestJuridica(message, userId) {
         "1 - De 1 a 12 meses\n" +
         "2 - De 12 a 24 meses\n" +
         "3 - Más de 24 meses\n" +
-        "4 - Regresar a la opción anterior\n"
+        "4 - Volver al menú anterior\n"
       );
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - Automóvil o SUV\n2 - Pick up\n3 - Van de carga o camiones\n4 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - Automóvil o SUV\n2 - Pick up\n3 - Van de carga o camiones\n4 - Volver al menú anterior");
       break;
   }
 }
@@ -340,14 +340,14 @@ async function handleContactTimeJuridica(message, userId) {
   const { userName } = userStates.get(userId);
   switch (userSelection) {
     case '1':
-      await message.reply("El especialista llamará al cliente de inmediato.");
+      await message.reply("El especialista se pondrá en contacto contigo de inmediato");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '2':
       userStates.set(userId, { state: 'schedule_time_juridica', previousState: 'contact_time_juridica', userName });
       await message.reply(
         `¿En qué horario desea que el especialista en arrendamiento se comunique con usted?\n` +
-        "3 - Regresar a la opción anterior\n"
+        "3 - Volver al menú anterior\n"
       );
       break;
     case '3':
@@ -357,11 +357,11 @@ async function handleContactTimeJuridica(message, userId) {
         "1 - Automóvil o SUV\n" +
         "2 - Pick up\n" +
         "3 - Van de carga o camiones\n" +
-        "4 - Regresar a la opción anterior\n"
+        "4 - Volver al menú anterior\n"
       );
       break;
     default:
-      await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato\n2 - Que se comuniquen conmigo en otro horario\n3 - Regresar a la opción anterior");
+      await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato\n2 - Que se comuniquen conmigo en otro horario\n3 - Volver al menú anterior");
       break;
   }
 }
@@ -370,7 +370,7 @@ async function handleContactTimeJuridica(message, userId) {
 async function handleScheduleTimeJuridica(message, userId) {
   const { userName } = userStates.get(userId);
   const contactTime = message.body.trim();
-  await message.reply(`El especialista llamará al cliente de inmediato a la hora indicada (${contactTime}).`);
+  await message.reply(`El especialista se contactará contigo de inmediato a la hora indicada. (${contactTime}).`);
   userStates.delete(userId); // Reiniciar el estado después de manejar la selección
 }
 
