@@ -121,7 +121,7 @@ async function handleMainMenuSelection(message, userId) {
 async function handleNameInput(message, userId) {
   const userName = message.body.trim();
   userStates.set(userId, { state: 'persona_type', previousState: 'name_input', userName });
-  await message.reply(`¡Gracias, ${userName}! Sabía usted que el renting de vehículos es un servicio de alquiler a largo plazo que permite a los usuarios disponer de un vehículo por un período determinado, a cambio de un canon de arrendamiento mensual. Nosotros nos encargaremos de los gastos asociados al vehículo, como el mantenimiento, el seguro y los impuestos, lo que hace que el renting sea una opción más conveniente y económica que la compra de un vehículo propio, gracias a sus beneficios tributarios. 🚗`);
+  await message.reply(`¡Gracias, ${userName}! Sabía usted que el renting de vehículos es un servicio de alquiler a largo plazo que permite a los usuarios disponer de un vehículo por un período determinado, a cambio de un canon de arrendamiento mensual. Nosotros nos encargaremos de los gastos asociados al vehículo, como el mantenimiento, el seguro y los impuestos, lo que hace que el renting sea una opción más conveniente y económica que la compra de un vehículo propio, gracias a sus beneficios tributarios.`);
   await message.reply(
     `Sr ${userName}, ¿qué tipo de persona es usted?\n` +
     "1 - Natural\n" +
@@ -170,7 +170,7 @@ async function handleDataCreditSelection(message, userId) {
   const { userName } = userStates.get(userId);
   switch (userSelection) {
     case '1':
-      await message.reply(`Sr ${userName}, lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido al reporte financiero no positivo. Tan pronto usted regule esta situación, podremos retomar el proceso de arrendamiento de vehículo 🚗 .\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias*`);
+      await message.reply(`Sr ${userName}, lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido al reporte financiero no positivo. Tan pronto usted regule esta situación, podremos retomar el proceso de arrendamiento de vehículo.\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias*`);
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '2':
@@ -212,7 +212,7 @@ async function handleIncomeVerificationSelection(message, userId) {
       );
       break;
     case '2':
-      await message.reply(`Sr ${userName}, lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido a que sus ingresos no cumplen con el requisito mínimo. Si cambia esta situación, podremos retomar el proceso de arrendamiento de vehículo 🚗.\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias*`);
+      await message.reply(`Sr ${userName}, lamentamos informarle que por políticas internas de la compañía, no podemos procesar su solicitud debido a que sus ingresos no cumplen con el requisito mínimo. Si cambia esta situación, podremos retomar el proceso de arrendamiento de vehículo.\n\nSi deseas volver a iniciar la conversación, escriba *Hola, quiero información de Renting gracias*`);
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '3':
@@ -237,7 +237,7 @@ async function handleContactTimeNatural(message, userId) {
   const { userName } = userStates.get(userId);
   switch (userSelection) {
     case '1':
-      await message.reply("El especialista llamará al cliente de inmediato 🚗.");
+      await message.reply("El especialista llamará al cliente de inmediato.");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '2':
@@ -266,7 +266,7 @@ async function handleContactTimeNatural(message, userId) {
 async function handleScheduleTimeNatural(message, userId) {
   const { userName } = userStates.get(userId);
   const contactTime = message.body.trim();
-  await message.reply(`El especialista se contactara  de inmediato a la hora indicada (${contactTime}) 🚗.`);
+  await message.reply(`El especialista llamará al cliente de inmediato a la hora indicada (${contactTime}).`);
   userStates.delete(userId); // Reiniciar el estado después de manejar la selección
 }
 
@@ -340,7 +340,7 @@ async function handleContactTimeJuridica(message, userId) {
   const { userName } = userStates.get(userId);
   switch (userSelection) {
     case '1':
-      await message.reply("El especialista llamará al cliente de inmediato 🚗.");
+      await message.reply("El especialista llamará al cliente de inmediato.");
       userStates.delete(userId); // Reiniciar el estado después de manejar la selección
       break;
     case '2':
@@ -370,7 +370,7 @@ async function handleContactTimeJuridica(message, userId) {
 async function handleScheduleTimeJuridica(message, userId) {
   const { userName } = userStates.get(userId);
   const contactTime = message.body.trim();
-  await message.reply(`El especialista se contactara  de inmediato a la hora indicada (${contactTime}) 🚗.`);
+  await message.reply(`El especialista llamará al cliente de inmediato a la hora indicada (${contactTime}).`);
   userStates.delete(userId); // Reiniciar el estado después de manejar la selección
 }
 
