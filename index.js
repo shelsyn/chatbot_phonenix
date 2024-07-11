@@ -92,8 +92,8 @@ async function handleInterest(message, userId) {
   await message.reply(
     "Hola, bienvenido a Phoenix Car, distribuidores autorizados de Mobilize Renting. Rentamos vehículos a largo plazo (más de un año). Al utilizar este medio, aceptas los términos y condiciones de WhatsApp.\n\n" +
     "Para continuar con nuestra asesoría, debes aceptar nuestra política de tratamiento de datos personales.\n" +
-    "* [tratamiento de datos](https://acortar.link/PfUDnS)\n\n" +
-    "Si aceptas, escribe *Si*. Si no, escribe *No*.\n\n" +
+    "* *tratamiento de datos*:https://acortar.link/PfUDnS.\n\n" +
+    "Si aceptas, escribe *Si*. Si no, escribe *No*.\n" +
     "*🚗 Si*\n" +
     "*🚗 No*\n"
   );
