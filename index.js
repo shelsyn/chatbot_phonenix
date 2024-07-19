@@ -1,13 +1,28 @@
 const http = require('http');
-const qrcode = require('qrcode-terminal');
+const QRCode = require('qrcode');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 
 // Crear servidor HTTP
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hola, mundo!\n');
+const server = http.createServer(async (req, res) => {
+  if (req.url === '/qr') {
+    // Servir el QR como imagen PNG
+    client.on('qr', async (qr) => {
+      try {
+        const qrImage = await QRCode.toBuffer(qr);
+        res.writeHead(200, { 'Content-Type': 'image/png' });
+        res.end(qrImage);
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Error generando QR');
+      }
+    });
+  } else {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Hola, mundo!\n');
+  }
 });
+
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
@@ -23,10 +38,6 @@ const client = new Client({
 });
 
 // Generar QR para conexión
-client.on('qr', (qr) => {
-  qrcode.generate(qr, { small: true });
-});
-
 client.on('ready', () => {
   console.log('Conexión establecida correctamente');
 });
