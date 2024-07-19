@@ -27,6 +27,18 @@ const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
 });
+const app = express();
+
+// Ruta para obtener el QR
+app.get('/qr', async (req, res) => {
+  try {
+    const qr = await qrcode.toDataURL('https://example.com'); // Reemplaza con tu URL o datos
+    res.send(`<img src="${qr}" alt="QR Code"/>`);
+  } catch (err) {
+    res.status(500).send('Error al generar QR');
+  }
+});
+
 
 // Configuración del cliente de WhatsApp
 const client = new Client({
