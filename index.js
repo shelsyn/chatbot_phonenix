@@ -1,6 +1,8 @@
 const http = require('http');
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
+const fs = require('fs-extra'); // Añadir
+const path = require('path'); // Añadir
 
 // Crear servidor HTTP
 const server = http.createServer((req, res) => {
@@ -31,8 +33,38 @@ client.on('ready', () => {
   console.log('Conexión establecida correctamente');
 });
 
-// Map para manejar el estado de los usuarios
-const userStates = new Map();
+// Ruta donde se almacenará el estado
+const stateFilePath = './user_states.json'; 
+
+// Función para cargar el estado de los usuarios desde un archivo
+function loadUserStates() {
+  try {
+    if (fs.existsSync(stateFilePath)) {
+      const data = fs.readFileSync(stateFilePath, 'utf8');
+      return new Map(Object.entries(JSON.parse(data))); // Convertir el objeto a Map
+    }
+  } catch (error) {
+    console.error('Error al cargar el estado de los usuarios:', error);
+  }
+  return new Map(); // Retorna un Map vacío si no se puede cargar el estado
+}
+
+// Función para guardar el estado de los usuarios en un archivo
+function saveUserStates(userStates) {
+  try {
+    if (userStates instanceof Map) {
+      const data = JSON.stringify(Object.fromEntries(userStates), null, 2);
+      fs.writeFileSync(stateFilePath, data, 'utf8');
+    } else {
+      throw new Error('userStates no es una instancia de Map');
+    }
+  } catch (error) {
+    console.error('Error al guardar el estado de los usuarios:', error);
+  }
+}
+
+// Cargar el estado de los usuarios al iniciar
+const userStates = loadUserStates();
 
 // Iniciar cliente de WhatsApp solo si se recibe el mensaje específico
 client.on('message', async (message) => {
@@ -84,7 +116,11 @@ client.on('message', async (message) => {
         break;
     }
   }
+
+  // Guardar el estado de los usuarios cuando cambie
+  saveUserStates(userStates);
 });
+
 
 // Función de manejo inicial del interés en renting
 async function handleInterest(message, userId) {
@@ -97,6 +133,7 @@ async function handleInterest(message, userId) {
     "*🚗 Si*\n" +
     "*🚗 No*\n"
   );
+  saveUserStates();
 }
 
 // Manejo de selección del menú principal
@@ -115,6 +152,7 @@ async function handleMainMenuSelection(message, userId) {
       await message.reply("Por favor, selecciona una opción válida del menú.");
       break;
   }
+  saveUserStates();
 }
 
 // Función auxiliar para manejar el nombre de usuario
@@ -128,6 +166,7 @@ async function handleNameInput(message, userId) {
     "2 - Jurídica\n" +
     "3 - Volver al menú anterior\n"
   );
+  saveUserStates();
 }
 
 // Selección de tipo de persona (Natural o Jurídica)
@@ -162,6 +201,7 @@ async function handlePersonaTypeSelection(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - Natural\n2 - Jurídica\n3 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Manejo de selección sobre reporte en Data Crédito
@@ -195,6 +235,7 @@ async function handleDataCreditSelection(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - SI\n2 - NO\n3 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Verificación de ingresos mensuales
@@ -229,6 +270,7 @@ async function handleIncomeVerificationSelection(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - SI\n2 - NO\n3 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Manejo del tiempo de contacto natural
@@ -260,6 +302,7 @@ async function handleContactTimeNatural(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato\n2 - Que se comuniquen conmigo en otro horario\n3 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Manejo del horario de contacto natural
@@ -268,6 +311,7 @@ async function handleScheduleTimeNatural(message, userId) {
   const contactTime = message.body.trim();
   await message.reply(`El especialista se contactará contigo de inmediato a la hora indicada (${contactTime}).`);
   userStates.delete(userId); // Reiniciar el estado después de manejar la selección
+  saveUserStates();
 }
 
 // Manejo del tiempo constituido para persona jurídica
@@ -300,6 +344,7 @@ async function handleTimeConstitutedJuridica(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - De 1 a 12 meses\n2 - De 12 a 24 meses\n3 - Más de 24 meses\n4 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Manejo del interés en vehículo para persona jurídica
@@ -332,6 +377,7 @@ async function handleVehicleInterestJuridica(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - Automóvil o SUV\n2 - Pick up\n3 - Van de carga o camiones\n4 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Manejo del tiempo de contacto para persona jurídica
@@ -364,6 +410,7 @@ async function handleContactTimeJuridica(message, userId) {
       await message.reply("Por favor, selecciona una opción válida:\n1 - Que se comunique de inmediato\n2 - Que se comuniquen conmigo en otro horario\n3 - Volver al menú anterior");
       break;
   }
+  saveUserStates();
 }
 
 // Manejo del horario de contacto para persona jurídica
@@ -372,6 +419,7 @@ async function handleScheduleTimeJuridica(message, userId) {
   const contactTime = message.body.trim();
   await message.reply(`El especialista se contactará contigo de inmediato a la hora indicada. (${contactTime}).`);
   userStates.delete(userId); // Reiniciar el estado después de manejar la selección
+  saveUserStates();
 }
 
 // Iniciar el cliente de WhatsApp
