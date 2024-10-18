@@ -424,3 +424,6 @@ async function handleScheduleTimeJuridica(message, userId) {
 
 // Iniciar el cliente de WhatsApp
 client.initialize();
+
+
+//shelsyn

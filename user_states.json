@@ -1,1 +1,67 @@
-{}
+{
+  "573228211192@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573115662715@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573209194483@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573207655353@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573502258454@c.us": {
+    "state": "contact_time_juridica",
+    "previousState": "vehicle_interest_juridica",
+    "userName": "Claudia"
+  },
+  "573118506698@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573134884905@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573102101873@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "5491551414027@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573001579450@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573015724738@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573058505368@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573023331906@c.us": {
+    "state": "name_input",
+    "previousState": "main_menu"
+  },
+  "573104006073@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573013313328@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  },
+  "573058290572@c.us": {
+    "state": "main_menu",
+    "previousState": null
+  }
+}
