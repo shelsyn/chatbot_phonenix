@@ -426,4 +426,4 @@ async function handleScheduleTimeJuridica(message, userId) {
 client.initialize();
 
 
-//shelsyn
+//shelsyn ggggg 
